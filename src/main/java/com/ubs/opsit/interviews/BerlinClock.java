@@ -20,49 +20,58 @@ public class BerlinClock implements TimeConverter {
         }
 
         return new StringBuilder().
-                append(getSeconds(parts.get(2))).append("\r\n").
-                append(getTopRowOfHours(parts.get(0))).append("\r\n").
-                append(getBottomRowOfHours(parts.get(0))).append("\r\n").
-                append(getTopRowOfMinutes(parts.get(1))).append("\r\n").
+                append(getSeconds(parts.get(2))).append(ConfigClock.NEW_LINE).
+                append(getTopRowOfHours(parts.get(0))).append(ConfigClock.NEW_LINE).
+                append(getBottomRowOfHours(parts.get(0))).append(ConfigClock.NEW_LINE).
+                append(getTopRowOfMinutes(parts.get(1))).append(ConfigClock.NEW_LINE).
                 append(getBottomRowOfMinutes(parts.get(1))).
                 toString();
     }
 
-    public static void main(String[] args) {
-        System.out.println(new BerlinClock().convertTime("00:00:00"));
-    }
-
     protected String getSeconds(int value) {
-        if (value % 2 == 0) return ConfigClock.ON_SIGN;
-        else return ConfigClock.OFF_SIGN;
+        if (value % 2 == 0)
+            return ConfigClock.ON_SIGN;
+        else
+            return ConfigClock.OFF_SIGN;
     }
 
     protected String getTopRowOfHours(int value) {
-        return getOnOff(ConfigClock.COUNT_OF_TOP_HOURS, getTopNumberOfOnSigns(value));
+        return getOnOff(
+                ConfigClock.COUNT_OF_TOP_HOURS,
+                getTopNumberOfOnSigns(value));
     }
 
     protected String getBottomRowOfHours(int value) {
-        return getOnOff(ConfigClock.COUNT_OF_BOTTOM_HOURS, value % 5);
+        return getOnOff(
+                ConfigClock.COUNT_OF_BOTTOM_HOURS,
+                value % 5);
     }
 
     protected String getTopRowOfMinutes(int value) {
         return getOnOff(
                 ConfigClock.COUNT_OF_TOP_MINUTES,
                 getTopNumberOfOnSigns(value),
-                ConfigClock.ON_SIGN).replaceAll("YYY", "YYR");
+                ConfigClock.ON_SIGN).replaceAll(
+                    ConfigClock.TOP_ROW_OF_MINUTES_WITHOUT_QUARTERS,
+                    ConfigClock.TOP_ROW_OF_MINUTES_WITH_QUARTERS);
     }
 
     protected String getBottomRowOfMinutes(int value) {
-        return getOnOff(ConfigClock.COUNT_OF_BOTTOM_MINUTES, value % 5, ConfigClock.ON_SIGN);
+        return getOnOff(
+                ConfigClock.COUNT_OF_BOTTOM_MINUTES,
+                value % 5,
+                ConfigClock.ON_SIGN);
     }
 
     private String getOnOff(int lampsInSummary, int lampsIsOnCount) {
-        return getOnOff(lampsInSummary, lampsIsOnCount, ConfigClock.QUARTER_SIGN);
+        return getOnOff(
+                lampsInSummary,
+                lampsIsOnCount,
+                ConfigClock.QUARTER_SIGN);
     }
 
     private String getOnOff(int lampsInSummary, int lampsIsOnCount, String notOffSign) {
         StringBuilder out = new StringBuilder();
-
         for (int i = 0; i < lampsIsOnCount; i++) {
             out.append(notOffSign);
         }
@@ -70,7 +79,6 @@ public class BerlinClock implements TimeConverter {
         for (int i = 0; i < (lampsInSummary - lampsIsOnCount); i++) {
             out.append(ConfigClock.OFF_SIGN);
         }
-
         return out.toString();
     }
 
